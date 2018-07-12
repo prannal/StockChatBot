@@ -74,7 +74,7 @@
                         if (newMember.Id != message.Recipient.Id)
                         {
                             var reply = message.CreateReply();
-                            reply.Text = $"Welcome {newMember.Name}."+" \n"+" This is Stock Detail Bot."+"\n"+" In this you can do:"+" \n "+"search price detail by symbol."+" \n"+" search company detail by symbol."+" \n "+" Using herocard search all detail.";
+                            reply.Text = $"Welcome {newMember.Name}."+" \n"+" This is the Stock Detail Bot."+"\n"+" In this you can do:"+" \n "+"search price detail by symbol."+" \n"+" search company detail by symbol."+" \n "+" Using herocard search all detail.";
                             client.Conversations.ReplyToActivityAsync(reply);
                         }
                     }
