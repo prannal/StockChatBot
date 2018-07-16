@@ -1,13 +1,18 @@
-# LUIS Bot Sample
+# Stock Chat Bot
 
-A sample bot integrated with a LUIS.ai application.
+The Stock ChatBot is a simple chatbot. This ChatBot help user to get Stock information such as stock rate detail, stock company detail and all other stock related information that it want.
+User get this information by using just one inquiry message i.e. If customer ask as “search price detail of AAPL[symbol] stock.” then it get all price rate(open, close, high, low, etc.) of given stock symbol. Or if customer ask such as “search all detail of AAPL [symbol] company detail.” then this stock chatbot gives all stock company related information like that company official website, it’s stock symbol, description, sector and many more things. If User want both company and price detail of stock by it’s symbol name then that thing is achieved by using Herocard.For meeting all this we required to integrated our stock chatbot with LUIS app using Microsoft Visual Studio 2017.
 
+This chat bot using following url for json file:
+https://api.iextrading.com/1.0/stock/aapl/previous
+"symbol":"AAPL","date":"2018-07-13","open":191.08,"high":191.84,"low":190.9,"close":191.33,"volume":12519792,"unadjustedVolume":12519792,"change":0.3,"changePercent":0.157,"vwap":191.424
 
-
+https://api.iextrading.com/1.0/stock/aapl/company
+"symbol":"AAPL","companyName":"Apple Inc.","exchange":"Nasdaq Global Select","industry":"Computer Hardware","website":"http://www.apple.com","description":"Apple Inc is designs, manufactures and markets mobile communication and media devices and personal computers, and sells a variety of related software, services, accessories, networking solutions and third-party digital content and applications.","CEO":"Timothy D. Cook","issueType":"cs","sector":"Technology","tags":["Technology","Consumer Electronics","Computer Hardware"]
 ### Prerequisites
 
 The minimum prerequisites to run this sample are:
-* The latest update of Visual Studio 2015. You can download the community version [here](http://www.visualstudio.com) for free.
+* The latest update of Visual Studio 2017. You can download the community version [here](http://www.visualstudio.com) for free.
 * The Bot Framework Emulator. To install the Bot Framework Emulator, download it from [here](https://emulator.botframework.com/). Please refer to [this documentation article](https://github.com/microsoft/botframework-emulator/wiki/Getting-Started) to know more about the Bot Framework Emulator.
 
 
@@ -55,28 +60,28 @@ You'll need these two values to configure the LuisDialog through the LuisModel a
 ### Code Highlights
 
 One of the key problems in human-computer interactions is the ability of the computer to understand what a person wants, and to find the pieces of information that are relevant to their intent. In the LUIS application, you will bundle together the intents and entities that are important to your task. Read more about [Planning an Application](https://www.microsoft.com/cognitive-services/en-us/LUIS-api/documentation/Plan-your-app) in the LUIS Help Docs.
-Check out the use of LuisIntent attributes decorating [RootLuisDialog](Dialogs/RootLuisDialog.cs#L36) methods to handle LUIS Intents, for instance `[LuisIntent("SearchHotels")]`.
+Check out the use of LuisIntent attributes decorating [RootLuisDialog](Dialogs/RootLuisDialog.cs#L55) methods to handle LUIS Intents, for instance `[LuisIntent("search.price")]`.
 
 ````C#
-[LuisIntent("SearchHotels")]
-public async Task Search(IDialogContext context, IAwaitable<IMessageActivity> activity, LuisResult result)
+[LuisIntent("search.price")]
+public async Task price(IDialogContext context, IAwaitable<IMessageActivity> activity, LuisResult result)
 {
     ...
 }
 ````
 
-Each intent handler method accepts the `IDialogContext`, the original incoming `IMessageActivity` message and the `LuisResult` including the matching Intents and Entities for the LUIS query. In the sample below, the [RootLuisDialog](Dialogs/RootLuisDialog.cs#L46) class retrieves a city value from the processed [pre-built entity](https://www.microsoft.com/cognitive-services/en-us/LUIS-api/documentation/Pre-builtEntities).
+Each intent handler method accepts the `IDialogContext`, the original incoming `IMessageActivity` message and the `LuisResult` including the matching Intents and Entities for the LUIS query. In the sample below, the [RootLuisDialog](Dialogs/RootLuisDialog.cs#L73) class retrieves a stock price from the processed [pre-built entity](https://www.microsoft.com/cognitive-services/en-us/LUIS-api/documentation/Pre-builtEntities).
 
 ````C#
 EntityRecommendation cityEntityRecommendation;
 
-if (result.TryFindEntity(EntityGeographyCity, out cityEntityRecommendation))
+if (result.TryFindEntity(EntityGeographyCity, out stockEntityRecommendation))
 {
-    cityEntityRecommendation.Type = "Destination";
+    stockEntityRecommendation.Type = "symbol";
 }
 ````
 
-You might notice the use of `EntityRecommendation.Type = "Destination"` in the code above. This is useful to map entity values to properties when reusing the LUIS captured entities for the  [`FormDialog<HotelsQuery>`](Dialogs/RootLuisDialog.cs#L51). The properties mapped to entities will be pre-populated. In the case of the `AirportCode` this extra step is not required since the entity name already matches the property name.
+You might notice the use of `EntityRecommendation.Type = "symbol"` in the code above. This is useful to map entity values to properties when reusing the LUIS captured entities for the (Dialogs/RootLuisDialog.cs#L51). The properties mapped to entities will be pre-populated. 
 
 ````C#
 var hotelsFormDialog = new FormDialog<HotelsQuery>(hotelsQuery, this.BuildHotelsForm, FormOptions.PromptInStart, result.Entities);
@@ -91,31 +96,7 @@ Another LUIS Model Feature used is Phrase List Features, for instance, the model
 
 ![Phrase List Feature](images/highlights-phrase.png)
 
-### Spelling Correction
 
-If you want to enable spelling correction, set the `IsSpellCorrectionEnabled` key to `true` in the [Web.config](Web.config) file.
-
-Bing Spell Check API provides a module that allows you to to correct the spelling of the text. Check out the [reference](https://dev.cognitive.microsoft.com/docs/services/56e73033cf5ff80c2008c679/operations/56e73036cf5ff81048ee6727) to know more about the modules available. 
-
-[BingSpellCheckService.cs](Services/BingSpellCheckService.cs) is the core component illustrating how to call the Bing Spell Check RESTful API.
-
-In this sample we added spell correction before calling the dialog. Check out the usage in [MessagesController.cs](Controllers/MessagesController.cs).
-
-````C#
-if (IsSpellCorrectionEnabled)
-{
-    try
-    {
-        activity.Text = await this.spellService.GetCorrectedTextAsync(activity.Text);
-    }
-    catch(Exception ex)
-    {
-        Trace.TraceError(ex.ToString());
-    }
-}
-
-await Conversation.SendAsync(activity, () => new RootLuisDialog());
-````
 
 ### Outcome
 
