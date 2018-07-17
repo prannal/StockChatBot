@@ -102,7 +102,7 @@ Another LUIS Model Feature used is Phrase List Features, for instance, the model
 
 You will see the following in the Bot Framework Emulator when opening and running the sample solution.
 
-![Sample Outcome](images/outcome.png)
+![Sample Outcome](images/output.png)
 
 ### More Information
 

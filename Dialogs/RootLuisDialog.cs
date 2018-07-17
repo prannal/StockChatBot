@@ -15,7 +15,7 @@ namespace LuisBot.Dialogs
     using Microsoft.Bot.Connector;
     using LuisBot;
 
-    [LuisModel("3dd159e3-0967-486d-b769-305dcbc8c2c4 ", "7eed46f6d4c041b1ac856eed7044161c")]
+    [LuisModel("3dd159e3-0967-486d-b769-305dcbc8c2c4 ", "488191be1c8b4928b03c1d72ef418e17")]
     [Serializable]
     public class RootLuisDialog : LuisDialog<object>
     {
