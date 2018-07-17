@@ -50,7 +50,19 @@ namespace LuisBot.Dialogs
 
         }
 
-        
+        [LuisIntent("Exit")]
+        public async Task exit(IDialogContext context, LuisResult result)
+        {
+            string message = $"thanks for using our service and your interest in our ChatBot.";
+
+            await context.PostAsync(message);
+            context.Wait(this.MessageReceived);
+
+
+
+        }
+
+
 
         [LuisIntent("search.price")]
         public async Task price(IDialogContext context, LuisResult result)
